@@ -3,7 +3,7 @@
 # file: phrase_lookup.rb
 
 # description: Returns a list of matching phrases from plain text
-# idea: return the list sorted by rank
+
 
 require 'yaml'
 require 'rxfhelper'
@@ -98,6 +98,8 @@ class PhraseLookup
 
   def lookup(s, limit: 10)
     
+    return [] if s.empty?
+    
     h = @master.to_h
     a = h.keys
     
@@ -118,4 +120,3 @@ class PhraseLookup
     @master.save filename
   end
 end
-
