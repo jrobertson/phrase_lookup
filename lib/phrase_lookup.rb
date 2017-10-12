@@ -89,8 +89,11 @@ class PhraseLookup
       
       s, _ = RXFHelper.read(raw_s)       
       
-      a = s.downcase.gsub(/\?/,'').lines\
-          .map {|x| x.strip[/(?<=: )[^|]+(?= )/i]}.compact
+      a = s.downcase.gsub(/\?/,'').lines.map do |x| 
+        phrase = x.strip[/(?<=: )[^|]+(?= )/i]
+        phrase.length < 50 ? phrase : nil if phrase
+      end.compact
+      
       a.uniq.inject({}) {|r,x| r.merge x => a.count(x)}
       
     end
@@ -120,3 +123,4 @@ class PhraseLookup
     @master.save filename
   end
 end
+
