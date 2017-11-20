@@ -107,9 +107,10 @@ class PhraseLookup
     a = h.keys
     
     a1 = a.grep /^#{s}/i
-    a2 = a.grep /\b#{s}/i
+    a2 = a.grep /\b#{s}/i        
 
-    return (a1 + a2).uniq.sort_by {|word| -h[word]}.take limit
+    return (a1 + a2).uniq.sort_by {|word| -h[word]}.take(limit)\
+        .map {|x| x.sub(/ +\|.*$/,'')}
     
   end
 
@@ -123,4 +124,3 @@ class PhraseLookup
     @master.save filename
   end
 end
-

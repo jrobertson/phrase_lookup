@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'phrase_lookup'
-  s.version = '0.1.3'
+  s.version = '0.1.4'
   s.summary = 'Returns a list of matching phrases from plain text'
   s.authors = ['James Robertson']
   s.files = Dir['lib/phrase_lookup.rb']
