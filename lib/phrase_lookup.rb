@@ -11,28 +11,33 @@ require 'rxfhelper'
 
 class PhraseLookup
 
-  def initialize(raw_s=nil)  
+  def initialize(obj=nil)  
 
-    @master = if raw_s then
+    @master = if obj then
       
-      s = RXFHelper.read(raw_s).first
-      
-      if s.lstrip =~ /^---/ then # it's YAML
+      if obj.is_a? String then
         
-         Master.new(s)      
-         
-      elsif s =~ /: /   # it's the contents of a log file
+        s = RXFHelper.read(obj).first
         
-         m = Master.new
-         m.create s
-         m
-         
-      else   # it's plain text
-        
-         m = Master.new
-         m.create_from_txt s
-         m
-         
+        if s.lstrip =~ /^---/ then # it's YAML
+          
+          Master.new( YAML.load(s))
+          
+        elsif s =~ /: /   # it's the contents of a log file
+          
+          m = Master.new
+          m.create s
+          m
+          
+        else   # it's plain text
+          
+          m = Master.new
+          m.create_from_txt s
+          m
+          
+        end
+      else
+        Master.new obj
       end
       
     end
@@ -42,9 +47,9 @@ class PhraseLookup
   
   class Master    
     
-    def initialize(yaml=nil)
+    def initialize(h={})
 
-      @h = yaml ? YAML.load(yaml) : {}
+      @h = h
       
     end
     
@@ -124,3 +129,4 @@ class PhraseLookup
     @master.save filename
   end
 end
+
