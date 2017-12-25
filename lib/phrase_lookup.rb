@@ -111,8 +111,9 @@ class PhraseLookup
     h = @master.to_h
     a = h.keys
     
-    a1 = a.grep /^#{s}/i
-    a2 = a.grep /\b#{s}/i        
+    a1, a2 = [/^#{s}/i, /\b#{s}/i].map do |regex|
+      a.select {|x| x.gsub(/\[[^\]]*\]/,'').gsub(/\([^\)]*\)/,'') =~ regex}
+    end
 
     return (a1 + a2).uniq.sort_by {|word| -h[word]}.take(limit)\
         .map {|x| x.sub(/ +\|.*$/,'')}
@@ -129,4 +130,3 @@ class PhraseLookup
     @master.save filename
   end
 end
-
