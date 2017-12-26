@@ -104,19 +104,24 @@ class PhraseLookup
     end
   end
 
-  def lookup(s, limit: 10)
+  def lookup(s, limit: 10, search_tags: false)
     
     return [] if s.empty?
     
     h = @master.to_h
     a = h.keys
     
-    a1, a2 = [/^#{s}/i, /\b#{s}/i].map do |regex|
-      a.select {|x| x.gsub(/\[[^\]]*\]/,'').gsub(/\([^\)]*\)/,'') =~ regex}
+    a3 = if search_tags then
+      a.grep /\].*(?:\b#{s}\b|\b#{s}).*\|.*(?:\b#{s}\b|\b#{s})/i
+    else
+      a1, a2 = [/^#{s}/i, /\b#{s}/i].map do |regex|
+        a.select {|x| x.gsub(/\[[^\]]*\]/,'').gsub(/\([^\)]*\)/,'') =~ regex}
+      end
+      (a1 + a2)
     end
 
-    return (a1 + a2).uniq.sort_by {|word| -h[word]}.take(limit)\
-        .map {|x| x.sub(/ +\|.*$/,'')}
+    return a3.sort_by {|word| -h[word]}.map {|x| x.sub(/ +\|.*$/,'')}\
+        .uniq.take(limit)        
     
   end
 
