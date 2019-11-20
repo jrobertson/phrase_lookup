@@ -11,7 +11,9 @@ require 'rxfhelper'
 
 class PhraseLookup
 
-  def initialize(obj=nil)  
+  def initialize(obj=nil, debug: false)  
+    
+    @debug = debug
 
     @master = if obj then
       
@@ -36,6 +38,15 @@ class PhraseLookup
           m
           
         end
+        
+      elsif obj.is_a? Array
+        
+        puts 'array detected' if @debug
+        
+        m = Master.new
+        m.parse_array obj
+        m
+        
       else
         Master.new obj
       end
@@ -77,9 +88,7 @@ class PhraseLookup
     
     def to_h()
       @h.clone
-    end
-    
-    private
+    end    
     
     def parse(raw_s)
       
@@ -89,6 +98,13 @@ class PhraseLookup
       a.uniq.inject({}) {|r,x| r.merge x => a.count(x)}
       
     end    
+    
+    def parse_array(a)
+           
+      @h = a.map {|x| x.downcase.gsub(/\?/,'')}\
+          .inject({}) {|r,x| r.merge x => a.count(x)}
+      
+    end 
     
     def parse_log(raw_s)
       
@@ -135,3 +151,4 @@ class PhraseLookup
     @master.save filename
   end
 end
+
